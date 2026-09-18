@@ -19,10 +19,17 @@ Prerequisites: Docker Engine with Compose support.
 3. Start the complete stack:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
 Open <http://localhost:7777>. The application container serves the React build through Nginx, proxies `/api` to FastAPI, and runs migrations automatically. PostgreSQL 18 stores relational user state and TVMaze JSONB snapshots.
+
+To force a complete image rebuild without using previous Docker build layers:
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
 
 ## Local development
 
@@ -55,7 +62,8 @@ cd frontend && npm run build
 The pipeline can use the same single-command deployment check:
 
 ```bash
-docker compose up --build -d
+docker compose build --no-cache
+docker compose up -d
 curl --fail http://localhost:7777/api/health
 ```
 
