@@ -1,9 +1,19 @@
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from app.application.contracts import GetSeriesDetailsRequest, SetWatchedStateRequest
-from app.application.use_cases import GetSeriesDetails, GetWatchedState, SetWatchedState
-from app.domain.entities import Episode, Series, WatchedEpisode
+from app.application.contracts import (
+    AddCommentRequest,
+    GetSeriesDetailsRequest,
+    SetWatchedStateRequest,
+)
+from app.application.use_cases import (
+    AddComment,
+    GetSeriesDetails,
+    GetWatchedState,
+    ListComments,
+    SetWatchedState,
+)
+from app.domain.entities import Comment, Episode, Series, WatchedEpisode
 
 
 class FakeCatalog:
@@ -56,8 +66,18 @@ class FakeWatched:
 
 
 class FakeComments:
+    def __init__(self) -> None:
+        self.comments: list[Comment] = []
+
     async def list_for_series(self, series_id):
-        return ()
+        return tuple(comment for comment in self.comments if comment.series_id == series_id)
+
+    async def list_for_episode(self, episode_id):
+        return tuple(comment for comment in self.comments if comment.episode_id == episode_id)
+
+    async def add(self, comment: Comment):
+        self.comments.append(comment)
+        return comment
 
 
 async def test_details_use_case_reads_and_writes_json_cache() -> None:
@@ -89,3 +109,29 @@ async def test_set_watched_state_uses_repository() -> None:
 
     assert result.episode_id == 10
     assert result.watched is True
+
+
+async def test_add_comment_persists_comment_for_series() -> None:
+    repository = FakeComments()
+    user_id = uuid4()
+
+    result = await AddComment(repository).execute(
+        AddCommentRequest(user_id=user_id, series_id=1, content="Great series")
+    )
+
+    assert result.series_id == 1
+    assert result.episode_id is None
+    assert result.author_id == user_id
+    assert repository.comments == [result]
+
+
+async def test_list_comments_returns_comments_for_episode() -> None:
+    repository = FakeComments()
+    comment = Comment(
+        uuid4(), uuid4(), "Interesting episode", datetime.now(UTC), episode_id=10
+    )
+    await repository.add(comment)
+
+    result = await ListComments(repository).for_episode(10)
+
+    assert result == (comment,)

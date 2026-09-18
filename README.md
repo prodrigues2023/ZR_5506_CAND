@@ -66,7 +66,12 @@ cd frontend && npm run build
 
 ## Jenkins
 
-The pipeline can use the same single-command deployment check:
+The repository includes a `Jenkinsfile`. Configure the following Jenkins credentials before running it:
+
+- `series-huggingface-api-key` as a Secret Text credential.
+- `series-postgres` as a Username with password credential.
+
+The pipeline runs quality checks, builds the stack without cache, starts it in detached mode, and validates the health endpoint with this command:
 
 ```bash
 docker compose build --no-cache && docker compose up -d && curl --fail http://localhost:7777/api/health

@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     environment: str = "development"
     database_url: str = "postgresql+asyncpg://localhost:5432/series"
     tvmaze_base_url: AnyHttpUrl = "http://api.tvmaze.com"
-    ai_provider: str = "huggingface"
     huggingface_api_key: str | None = None
     huggingface_model: str = "google/flan-t5-base"
     huggingface_api_url: AnyHttpUrl = "https://api-inference.huggingface.co/models"
