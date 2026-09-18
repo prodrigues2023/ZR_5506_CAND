@@ -1,0 +1,13 @@
+.env
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.presentation-build/
+output/*.pptx
+output/*.png
+output/*.json
+docs/*Challenge*.pdf
