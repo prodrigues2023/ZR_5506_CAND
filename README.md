@@ -15,8 +15,7 @@ Interactive TV series experience built for the Software Architect technical chal
 Prerequisites: Docker Engine with Compose support.
 
 1. Copy `.env.example` to `.env`.
-2. Set `SERIES_DATABASE_URL`, `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` in `.env`.
-3. Add `SERIES_HUGGINGFACE_API_KEY` if AI provider calls should be enabled. The application still works with the deterministic fallback when the key is empty.
+2. Set `SERIES_HUGGINGFACE_API_KEY` in `.env`. This key is required for communication with the Hugging Face provider. Without it, the application starts and the other features remain available, but AI insight requests use only the deterministic fallback and do not call the external AI provider.
 3. Start the complete stack:
 
 ```bash
